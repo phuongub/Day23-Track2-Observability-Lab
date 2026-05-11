@@ -14,7 +14,7 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from prometheus_client import Counter, Gauge, Histogram
 
 # ── Prometheus metrics ────────────────────────────────────────
@@ -66,7 +66,7 @@ def setup_otel() -> None:
     provider = TracerProvider(resource=resource)
     endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")
     provider.add_span_processor(
-        BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint, insecure=True))
+        SimpleSpanProcessor(OTLPSpanExporter(endpoint=endpoint, insecure=True))
     )
     trace.set_tracer_provider(provider)
     # Auto-instrument FastAPI handlers (creates server spans for every route)
